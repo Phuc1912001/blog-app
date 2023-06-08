@@ -8,6 +8,7 @@ import Editor from "./pages/Editor";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import Article from "./pages/Article";
+import NhapApi from "./pages/Nhap";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,11 @@ const router = createBrowserRouter([
         element: <Register />,
       },
       {
-        path: "editor",
+        path: "editor/",
+        element: <Editor />,
+      },
+      {
+        path: "editor/:slug",
         element: <Editor />,
       },
       {
@@ -41,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "articles/:slug",
         element: <Article />,
+      },
+      {
+        path: "nhap",
+        element: <NhapApi />,
       },
     ],
   },

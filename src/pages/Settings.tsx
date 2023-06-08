@@ -7,7 +7,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
-import { infoUser } from "../Redux/feature/userSlice";
+import { infoUser, resetUser } from "../Redux/feature/userSlice";
 import { AppDispatch, RootState } from "../Redux/type";
 
 const { TextArea } = Input;
@@ -77,13 +77,16 @@ const Settings = () => {
           md={12}
           className="d-flex flex-column align-items-center justify-content-center"
         >
-          <h1>Your Settings</h1>
+          <div className="d-flex flex-column align-items-center justify-content-between">
+            <h1>Your Settings</h1>
+          </div>
 
           <Loading isLoading={loading}>
             <Form
+              className="shadow p-5"
               name="basic"
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 18 }}
+              labelCol={{ span: 3 }}
+              wrapperCol={{ span: 21 }}
               style={{ width: 600 }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
@@ -127,7 +130,7 @@ const Settings = () => {
                 <Input.Password />
               </Form.Item>
 
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+              <Form.Item wrapperCol={{ offset: 9, span: 24 }}>
                 <Button type="primary" htmlType="submit">
                   Update Settings
                 </Button>

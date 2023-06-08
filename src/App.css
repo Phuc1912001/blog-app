@@ -5,3 +5,47 @@
 .text-warning:hover {
   text-decoration: underline;
 }
+
+.button-delete {
+  border: 1px solid red;
+  display: flex;
+  align-items: center;
+  color: red;
+}
+
+.button-delete:hover {
+  border: none;
+  display: flex;
+  align-items: center;
+  color: black !important;
+  background-color: red;
+}
+
+.button-edit {
+  border: 1px solid orange;
+  display: flex;
+  align-items: center;
+  color: orange;
+}
+
+.button-edit:hover {
+  border: none;
+  display: flex;
+  align-items: center;
+  color: black !important;
+  background-color: orange;
+}
+
+.comment-btn {
+  border: none;
+}
+
+
+
+.comment-btn .anticon {
+  margin-bottom: 10px;
+}
+
+.text-propover:hover {
+  color: blue;
+}

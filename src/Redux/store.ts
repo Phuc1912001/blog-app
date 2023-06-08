@@ -1,5 +1,4 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-
 import storage from "redux-persist/lib/storage";
 import {
   persistReducer,
@@ -12,6 +11,8 @@ import {
   REGISTER,
 } from "redux-persist";
 import userSlice from "./feature/userSlice";
+import articleSlice from "./feature/articleSlice";
+import tagsPopularSlice from "./feature/tagsSlice"; // Import the correct tagsPopularSlice
 
 const persistConfig = {
   key: "root",
@@ -22,6 +23,8 @@ const persistedReducer = persistReducer(
   persistConfig,
   combineReducers({
     user: userSlice,
+    article: articleSlice,
+    tagsPopular: tagsPopularSlice,
   })
 );
 

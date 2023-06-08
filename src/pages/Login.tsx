@@ -4,7 +4,7 @@ import { useState } from "react";
 import Loading from "../components/Loading";
 import * as message from "../components/Message";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { infoUser } from "../Redux/feature/userSlice";
 import { AppDispatch } from "../Redux/type";
@@ -68,49 +68,56 @@ const Login = () => {
       <Row>
         <Col
           md={12}
-          className="d-flex flex-column align-items-center justify-content-center"
+          className="d-flex flex-column align-items-center justify-content-center "
         >
-          <h1>Sign In</h1>
-          <p className="text-success">Need an acount</p>
-          <Loading isLoading={loading}>
-            <Form
-              name="basic"
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 18 }}
-              style={{ width: 600 }}
-              initialValues={{ remember: true }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
+          <div className="shadow p-5 d-flex flex-column align-items-center justify-content-center ">
+            <h1>Sign In</h1>
+            <Link
+              to={"/register"}
+              className="text-success text-decoration-none mb-3 "
             >
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[
-                  { required: true, message: "Please input your email!" },
-                  { validator: validateEmail },
-                ]}
+              Need an acount
+            </Link>
+            <Loading isLoading={loading}>
+              <Form
+                name="basic"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
+                style={{ width: 500 }}
+                initialValues={{ remember: true }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                autoComplete="off"
               >
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  label="Email"
+                  name="email"
+                  rules={[
+                    { required: true, message: "Please input your email!" },
+                    { validator: validateEmail },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[
-                  { required: true, message: "Please input your password!" },
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
+                <Form.Item
+                  label="Password"
+                  name="password"
+                  rules={[
+                    { required: true, message: "Please input your password!" },
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
 
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit">
-                  Sign In
-                </Button>
-              </Form.Item>
-            </Form>
-          </Loading>
+                <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+                  <Button type="primary" htmlType="submit">
+                    Sign In
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Loading>
+          </div>
         </Col>
       </Row>
     </Container>

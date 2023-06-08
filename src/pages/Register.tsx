@@ -4,7 +4,7 @@ import { useState } from "react";
 import Loading from "../components/Loading";
 import * as message from "../components/Message";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -53,56 +53,63 @@ const Register = () => {
           md={12}
           className="d-flex flex-column align-items-center justify-content-center"
         >
-          <h1>Sign Up</h1>
-          <p className="text-success">Have an acount</p>
-          <Loading isLoading={loading}>
-            <Form
-              name="basic"
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 18 }}
-              style={{ width: 600 }}
-              initialValues={{ remember: true }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
+          <div className="d-flex flex-column align-items-center justify-content-center shadow p-5 ">
+            <h1>Sign Up</h1>
+            <Link
+              to={"/login"}
+              className="text-success text-decoration-none mb-3"
             >
-              <Form.Item
-                label="Username"
-                name="username"
-                rules={[
-                  { required: true, message: "Please input your username!" },
-                ]}
+              Have an acount
+            </Link>
+            <Loading isLoading={loading}>
+              <Form
+                name="basic"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
+                style={{ width: 500 }}
+                initialValues={{ remember: true }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                autoComplete="off"
               >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[
-                  { required: true, message: "Please input your email!" },
-                  { validator: validateEmail },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  label="Username"
+                  name="username"
+                  rules={[
+                    { required: true, message: "Please input your username!" },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label="Email"
+                  name="email"
+                  rules={[
+                    { required: true, message: "Please input your email!" },
+                    { validator: validateEmail },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[
-                  { required: true, message: "Please input your password!" },
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
+                <Form.Item
+                  label="Password"
+                  name="password"
+                  rules={[
+                    { required: true, message: "Please input your password!" },
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
 
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit">
-                  Sign Up
-                </Button>
-              </Form.Item>
-            </Form>
-          </Loading>
+                <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+                  <Button type="primary" htmlType="submit">
+                    Sign Up
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Loading>
+          </div>
         </Col>
       </Row>
     </Container>

@@ -3,14 +3,15 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { FavoriteButton } from "../Button/FavoriteButton";
 import { FollowButton } from "../Button/FollowButton";
 import * as message from "../../components/Message";
+import { useState } from "react";
 
 const UserAction = ({
   article,
   user,
-  setStatusFavorite,
-  setStatusFollow,
   handleEdit,
   confirm,
+  favoriteCount,
+  setFavoriteCount,
 }: any) => {
   const cancel = () => {
     message.warning("Close Popconfirm ");
@@ -50,10 +51,11 @@ const UserAction = ({
         <div className="d-flex align-items-center gap-3">
           <FavoriteButton
             article={article}
-            setStatusFavorite={setStatusFavorite}
+            favoriteCount={favoriteCount}
+            setFavoriteCount={setFavoriteCount}
           />
 
-          <FollowButton article={article} setStatusFollow={setStatusFollow} />
+          <FollowButton article={article} />
         </div>
       )}
     </div>

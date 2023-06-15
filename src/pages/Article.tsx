@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import { Space, Tag } from "antd";
+import { HeartFilled } from "@ant-design/icons";
 
 import { useNavigate } from "react-router-dom";
 
@@ -15,12 +16,14 @@ import * as message from "../components/Message";
 import { api } from "../services/AxiosInstance";
 import UserAction from "../components/UserAction/UserAction";
 import Comment from "../components/Comment/Comment";
+import { dataImage } from "../dataImage/dataImage";
 
 const Article = () => {
   const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [articleLoaded, setArticleLoaded] = useState<boolean>(false);
-  console.log("article trong acrticle", article);
+
+  const [favoriteCount, setFavoriteCount] = useState(0);
 
   const params = useParams();
   const { slug } = params;
@@ -33,7 +36,6 @@ const Article = () => {
 
   const fetchAnArticle = async () => {
     setLoading(true);
-
     const response = await api.get(
       `${process.env.REACT_APP_API_URL}/articles/${slug}`
     );
@@ -65,54 +67,91 @@ const Article = () => {
     <Loading isLoading={loading}>
       <Container className="pt-5">
         <Row>
-          <Col md={12} className="mb-5">
-            <h2>{article?.title}</h2>
-            <div className="d-flex align-items-center gap-3">
-              <div className="d-flex align-items-center gap-3">
-                <img
-                  src={article?.author?.image}
-                  alt="avatar"
-                  style={{
-                    height: "50px",
-                    width: "50px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                  }}
-                />
-                <div>
-                  <h6
-                    role="button"
-                    className="text-warning"
-                    onClick={handleProfileUser}
-                  >
-                    {article?.author?.username}
-                  </h6>
-                  <p className="text-secondary">
-                    {moment(article?.createdAt).format("MMMM D, YYYY")}
-                  </p>
+          <Col md={8}>
+            <div>
+              <img
+                src={`${
+                  dataImage[Math.floor(Math.random() * dataImage.length)]
+                    .imageUrl
+                }`}
+                className="w-100 rounded "
+                style={{ height: "700px", objectFit: "cover" }}
+                alt=""
+              />
+            </div>
+            <div className="mt-2">
+              <p>{article?.body}</p>
+            </div>
+          </Col>
+          <Col md={4}>
+            <Col md={12} className="">
+              <div>
+                <div className="d-flex align-items-center gap-3">
+                  {article?.author?.image && (
+                    <img
+                      src={article.author.image}
+                      alt="avatar"
+                      style={{
+                        height: "40px",
+                        width: "40px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
+                  <div>
+                    <div
+                      role="button"
+                      className="text-warning"
+                      onClick={handleProfileUser}
+                    >
+                      {article?.author?.username}
+                    </div>
+                    <p className="text-secondary">
+                      {moment(article?.createdAt).fromNow()}
+                    </p>
+                  </div>
                 </div>
               </div>
+              <h2>{article?.title}</h2>
+
+              <div>
+                {article?.tagList && (
+                  <Space size={[0, 8]} wrap>
+                    {article.tagList.map((tag: string, index: number) => (
+                      <Tag key={index} color="green">
+                        {tag}
+                      </Tag>
+                    ))}
+                  </Space>
+                )}
+              </div>
+              {favoriteCount && (
+                <>
+                  <hr />
+                  <div className="d-flex align-items-center gap-1 ">
+                    <div className="d-flex align-items-center text-danger ">
+                      <HeartFilled />
+                    </div>
+                    <div> {favoriteCount}</div>
+                  </div>
+                </>
+              )}
+
+              <hr />
               <UserAction
                 article={article}
                 user={user}
                 handleEdit={handleEdit}
                 confirm={confirm}
+                favoriteCount={favoriteCount}
+                setFavoriteCount={setFavoriteCount}
               />
-            </div>
-            <p>{article?.body}</p>
-            <div>
-              <Space size={[0, 8]} wrap>
-                {article?.tagList.map((tag: string, index: number) => (
-                  <Tag key={index} color="green">
-                    {tag}
-                  </Tag>
-                ))}
-              </Space>
-            </div>
-          </Col>
-          <hr />
-          <Col md={12}>
-            {articleLoaded && <Comment user={user} article={article} />}
+            </Col>
+            <hr />
+            <Col md={12}>
+              {articleLoaded && <Comment user={user} article={article} />}
+            </Col>
           </Col>
         </Row>
       </Container>

@@ -7,9 +7,11 @@ import {
   AppstoreAddOutlined,
   SettingOutlined,
   LogoutOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Popover } from "antd";
 import { resetUser } from "../Redux/feature/userSlice";
+import Notify from "./Notify";
 
 const Header = () => {
   const user: any = useSelector((state: RootState) => state.user.user);
@@ -24,6 +26,15 @@ const Header = () => {
     navigate(`/profiles/${user.username}`);
   };
 
+  const handleNewArticle = () => {
+    setPopoverVisible(false);
+    navigate(`/editor`);
+  };
+  const handleSetting = () => {
+    setPopoverVisible(false);
+    navigate(`/settings`);
+  };
+
   const handleLogout = () => {
     setPopoverVisible(false);
     localStorage.removeItem("token");
@@ -33,11 +44,33 @@ const Header = () => {
 
   const content = (
     <div className="p-2">
-      <div className="text-propover" role="button" onClick={handleProfileUser}>
-        Your Profile
+      <div
+        className="d-flex align-items-center gap-2 text-propover"
+        role="button"
+        onClick={handleNewArticle}
+      >
+        <AppstoreAddOutlined />
+        <div> New Article</div>
       </div>
       <div
-        className="d-flex align-items-center gap-2 mt-2 text-propover"
+        className="d-flex align-items-center gap-2 text-propover"
+        role="button"
+        onClick={handleSetting}
+      >
+        <SettingOutlined />
+        <div> Settings</div>
+      </div>
+      <div
+        className="d-flex align-items-center gap-2 text-propover"
+        role="button"
+        onClick={handleProfileUser}
+      >
+        <UserOutlined />
+        Your Profile
+      </div>
+      <hr />
+      <div
+        className="d-flex align-items-center gap-2 text-propover"
         role="button"
         onClick={handleLogout}
       >
@@ -52,32 +85,14 @@ const Header = () => {
       <Row>
         <Col className="d-flex align-items-center justify-content-between">
           <NavLink
-            className="text-decoration-none fw-bold fs-5 text-success "
+            className="text-decoration-none fw-bold fs-5 text-danger "
             to={"/"}
           >
-            Conduit
+            Bờ Lốc
           </NavLink>
           <div className="d-flex align-items-center gap-3 ">
-            <NavLink className="text-decoration-none text-dark" to={"/"}>
-              Home
-            </NavLink>
             {user.username ? (
               <>
-                <NavLink
-                  className="text-decoration-none text-dark d-flex align-items-center gap-1 "
-                  to={"/editor"}
-                >
-                  <AppstoreAddOutlined />
-                  <span> New Article</span>
-                </NavLink>
-                <NavLink
-                  className="text-decoration-none text-dark d-flex align-items-center gap-1 "
-                  to={"/settings"}
-                >
-                  <SettingOutlined />
-                  Settings
-                </NavLink>
-
                 <Popover
                   placement="bottomRight"
                   content={content}
@@ -122,6 +137,8 @@ const Header = () => {
           </div>
         </Col>
       </Row>
+
+      <Notify />
     </Container>
   );
 };

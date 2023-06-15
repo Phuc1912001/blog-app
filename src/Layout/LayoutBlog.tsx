@@ -3,16 +3,17 @@ import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Col, Container, Row } from "react-bootstrap";
+import Notify from "../components/Notify";
 
 const LayoutBlog = () => {
   return (
-    <Container>
+    <Container fluid>
       <Row>
         <Col md={12} className="p-0">
-          <div className="pt-3 pb-3  ">
+          <div className="pt-3 pb-3  bg-white shadow">
             <Header />
           </div>
-          <div className="mb-5">
+          <div className="">
             <Outlet />
           </div>
         </Col>

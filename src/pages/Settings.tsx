@@ -85,8 +85,8 @@ const Settings = () => {
             <Form
               className="shadow p-5"
               name="basic"
-              labelCol={{ span: 3 }}
-              wrapperCol={{ span: 21 }}
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
               style={{ width: 600 }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}

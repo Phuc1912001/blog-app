@@ -14,6 +14,7 @@ import userSlice from "./feature/userSlice";
 import articleSlice from "./feature/articleSlice";
 import tagsPopularSlice from "./feature/tagsSlice"; // Import the correct tagsPopularSlice
 
+
 const persistConfig = {
   key: "root",
   storage,
@@ -25,6 +26,7 @@ const persistedReducer = persistReducer(
     user: userSlice,
     article: articleSlice,
     tagsPopular: tagsPopularSlice,
+
   })
 );
 

@@ -1,28 +1,48 @@
 import { Container, Row, Col } from "react-bootstrap";
 import { Tabs, Pagination, Space, Tag } from "antd";
 import type { TabsProps } from "antd";
+import {
+  AppstoreAddOutlined,
+  ShopOutlined,
+  FireOutlined,
+  BulbOutlined,
+  PlaySquareOutlined,
+  HeartOutlined,
+  BarChartOutlined,
+  SketchOutlined,
+  SettingOutlined,
+  DollarOutlined,
+  GlobalOutlined,
+  MessageOutlined,
+  PushpinOutlined,
+  ShoppingCartOutlined,
+  TrophyOutlined,
+  SoundOutlined,
+} from "@ant-design/icons";
 
-import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/type";
 import Blogs from "../components/Blogs";
 import { api } from "../services/AxiosInstance";
 import Loading from "../components/Loading";
 import { infoTagsPopular } from "../Redux/feature/tagsSlice";
+import { dataImage } from "../dataImage/dataImage";
+import FeedArticle from "../components/FeedArticle/FeedArticle";
+import GlobalArticle from "../components/GlobalArticle/GlobalArticle";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [globalArticles, setGlobalArticles] = useState<any>([]);
-  const [feedArticles, setFeedGlobalArticles] = useState<any>([]);
+
   const [tagsArticles, setTagsArticles] = useState<any>([]);
   const [tags, setTags] = useState<any>([]);
   const [tagParam, setTagParam] = useState<any>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalItemsOfGlobalArticles, setTotalItemsOfGlobalArticles] =
-    useState<number>(300);
-  const [totalItemsOfFeedArticles, setTotalItemsOfFeedArticles] =
-    useState<number>(300);
+  const [currentPageFeed, setCurrentPageFeed] = useState<number>(1);
+  const [currentPageGlobal, setCurrentPageGlobal] = useState<number>(1);
+  const [currentPageTags, setCurrentPageTags] = useState<number>(1);
+
   const [totalItemsOfTagArticles, setTotalItemsOfTagArticles] =
     useState<number>(300);
   const [pageSize] = useState<number>(5);
@@ -33,31 +53,11 @@ const Home = () => {
   const user: any = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch<AppDispatch>();
 
-  const fetchGlobalArticles = async () => {
-    setLoading(true);
-    const offset = (currentPage - 1) * pageSize;
-    let apiUrl = `${process.env.REACT_APP_API_URL}/articles?limit=${pageSize}&offset=${offset}`;
-    const response = await api.get(apiUrl);
-    const { articles, articlesCount } = response.data;
-    setGlobalArticles(articles);
-    setTotalItemsOfGlobalArticles(articlesCount);
-    setLoading(false);
-  };
-  const fetchFeedArticles = async () => {
-    setLoading(true);
-    const offset = (currentPage - 1) * pageSize;
-    let apiUrl = `${process.env.REACT_APP_API_URL}/articles/feed?limit=${pageSize}&offset=${offset}`;
-
-    const response = await api.get(apiUrl);
-    const { articles, articlesCount } = response.data;
-    setFeedGlobalArticles(articles);
-    setTotalItemsOfFeedArticles(articlesCount);
-    setLoading(false);
-  };
+  const navigate = useNavigate();
 
   const fetchTagArticles = async () => {
     setLoading(true);
-    const offset = (currentPage - 1) * pageSize;
+    const offset = (currentPageTags - 1) * pageSize;
     console.log("tagParam", tagParam);
 
     let apiUrl = `${process.env.REACT_APP_API_URL}/articles?tag=${tagParam}&limit=${pageSize}&offset=${offset}`;
@@ -79,44 +79,31 @@ const Home = () => {
 
   useEffect(() => {
     fetchTags();
-    fetchGlobalArticles();
   }, []);
 
   useEffect(() => {
-    fetchGlobalArticles();
-    if (user.username) {
-      fetchFeedArticles();
-    }
     fetchTagArticles();
-  }, [currentPage]);
+  }, [currentPageTags]);
 
   useEffect(() => {
     fetchTagArticles();
   }, [tagParam]);
-
-  useEffect(() => {
-    if (user.username) {
-      fetchFeedArticles();
-    }
-  }, [user]);
 
   const onChange = (key: string) => {
     setActiveTab(key);
     switch (key) {
       case "your-feed":
         setShowArticle("your-feed");
-        setCurrentPage(1);
-        fetchFeedArticles();
+        setCurrentPageFeed(1);
+
         break;
       case "global-feed":
-        console.log("tao đây");
         setShowArticle("global-feed");
         setTagParam("");
-        setCurrentPage(1);
-        fetchGlobalArticles();
+        setCurrentPageGlobal(1);
         break;
       case "tags":
-        setCurrentPage(1);
+        setCurrentPageTags(1);
         setTagParam("");
         break;
       default:
@@ -125,24 +112,40 @@ const Home = () => {
   };
 
   const handlePaginationChange = (page: number) => {
-    setCurrentPage(page);
+    setCurrentPageTags(page);
   };
 
   const handleClickTags = (tag: any) => {
     setTagParam(tag);
     setActiveTab("tags");
     setShowArticle("tags");
-    setCurrentPage(1);
+    setCurrentPageTags(1);
   };
 
   const items: TabsProps["items"] = [
     {
       key: "your-feed",
       label: `Your Feed`,
+      children: (
+        <FeedArticle
+          showArticles={showArticles}
+          currentPageFeed={currentPageFeed}
+          setCurrentPageFeed={setCurrentPageFeed}
+          pageSize={pageSize}
+        />
+      ),
     },
     {
       key: "global-feed",
       label: `Global Feed`,
+      children: (
+        <GlobalArticle
+          showArticles={showArticles}
+          currentPageGlobal={currentPageGlobal}
+          setCurrentPageGlobal={setCurrentPageGlobal}
+          pageSize={pageSize}
+        />
+      ),
     },
 
     {
@@ -151,7 +154,7 @@ const Home = () => {
     },
   ];
 
-  const visibleItems = user.username ? items : items.slice(1);
+  const visibleItems = user.username ? items : items.slice(1); /// cho vaof useMemo
 
   const colorTags = [
     "magenta",
@@ -167,80 +170,142 @@ const Home = () => {
     "purple",
   ];
 
+  const handleNewArticle = () => {
+    navigate(`/editor`);
+  };
+  const handleSetting = () => {
+    navigate(`/settings`);
+  };
+
   return (
     <Container>
       <Row className="">
-        <Col md={9}>
+        <Col md={2} className="shadow rounded p-3 ">
+          <div
+            className="d-flex align-items-center gap-3 text-propover "
+            role="button"
+            onClick={handleNewArticle}
+          >
+            <AppstoreAddOutlined />
+            <div> New Article</div>
+          </div>
+          <div
+            className="d-flex align-items-center gap-3 text-propover "
+            role="button"
+            onClick={handleSetting}
+          >
+            <SettingOutlined />
+            <div> Settings</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <FireOutlined />
+            <div> Games</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <BulbOutlined />
+            <div> Ideal</div>
+          </div>
+          <hr />
+          <div className="d-flex align-items-center gap-3 ">
+            <PlaySquareOutlined />
+            <div> Reel</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <HeartOutlined />
+            <div> Love</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <BarChartOutlined />
+            <div> Analysis</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <SketchOutlined />
+            <div> Donate</div>
+          </div>
+          <hr />
+          <div className="d-flex align-items-center gap-3 ">
+            <SoundOutlined />
+            <div> Notify</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <TrophyOutlined />
+            <div> Cup</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <ShoppingCartOutlined />
+            <div> Shop</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <PushpinOutlined />
+            <div> Ghim</div>
+          </div>
+          <hr />
+          <div className="d-flex align-items-center gap-3 ">
+            <MessageOutlined />
+            <div> Message</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <GlobalOutlined />
+            <div> Global</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <DollarOutlined />
+            <div> Coins</div>
+          </div>
+          <div className="d-flex align-items-center gap-3 ">
+            <SketchOutlined />
+            <div> Donate</div>
+          </div>
+          <hr />
+          <div className="d-flex align-items-center gap-3 ">
+            <ShopOutlined />
+            <div> Shop</div>
+          </div>
+        </Col>
+        <Col
+          md={7}
+          style={{ height: "90vh", overflow: "scroll", overflowX: "hidden" }}
+        >
           <Tabs
             activeKey={activeTab}
             items={visibleItems}
             onChange={onChange}
           />
-          {showArticles === "your-feed" && (
-            <div>
-              {feedArticles.length === 0 ? (
-                <Loading isLoading={loading} className="mt-5 mb-5">
-                  làm ơn hãy follow
-                </Loading>
-              ) : (
-                <Loading isLoading={loading}>
-                  {feedArticles.map((article: any) => (
-                    <div key={article.slug}>
-                      <Blogs article={article} />
-                    </div>
-                  ))}
-                </Loading>
-              )}
-            </div>
-          )}
-
-          {showArticles === "global-feed" && (
-            <Loading isLoading={loading}>
-              {globalArticles.map((article: any) => (
-                <div key={article.slug}>
-                  <Blogs article={article} />
-                </div>
-              ))}
-            </Loading>
-          )}
 
           {showArticles === "tags" && (
             <Loading isLoading={loading}>
               {tagsArticles.map((article: any) => (
                 <div key={article.slug}>
-                  <Blogs article={article} />
+                  <Blogs
+                    article={article}
+                    imageUrl={
+                      dataImage[Math.floor(Math.random() * dataImage.length)]
+                        .imageUrl
+                    }
+                  />
                 </div>
               ))}
             </Loading>
           )}
-
-          {showArticles === "your-feed" && (
-            <Pagination
-              current={currentPage}
-              pageSize={pageSize}
-              total={totalItemsOfFeedArticles}
-              onChange={handlePaginationChange}
-            />
-          )}
-          {showArticles === "global-feed" && (
-            <Pagination
-              current={currentPage}
-              pageSize={pageSize}
-              total={totalItemsOfGlobalArticles}
-              onChange={handlePaginationChange}
-            />
-          )}
-          {showArticles === "tags" && (
-            <Pagination
-              current={currentPage}
-              pageSize={pageSize}
-              total={totalItemsOfTagArticles}
-              onChange={handlePaginationChange}
-            />
+          {tagsArticles.length === 0 ? (
+            ""
+          ) : (
+            <>
+              {showArticles === "tags" && (
+                <div className="text-center">
+                  <Pagination
+                    current={currentPageTags}
+                    pageSize={pageSize}
+                    total={totalItemsOfTagArticles}
+                    onChange={handlePaginationChange}
+                  />
+                </div>
+              )}
+            </>
           )}
         </Col>
         <Col md={3}>
-          <div className="bg-light p-3">
+          <div className=" p-3">
             <p>Popular Tag</p>
             <Space size={[0, 8]} wrap>
               {tags.map((tag: any, index: number) => (

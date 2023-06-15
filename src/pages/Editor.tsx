@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Form, Input } from "antd";
+import { AutoComplete, Button, Form, Input } from "antd";
 import { Container, Row, Col } from "react-bootstrap";
 import { Space, Tag } from "antd";
 import axios from "axios";
@@ -17,7 +17,6 @@ const Editor = () => {
   const tagsPopular: any = useSelector(
     (state: RootState) => state.tagsPopular.tagsPopular
   );
-  console.log("tagsPopular", tagsPopular);
 
   const [loading, setLoading] = useState(false);
   const [tagList, setTagList] = useState<any>([]);
@@ -93,7 +92,15 @@ const Editor = () => {
     setInputTag(e.target.value);
   };
 
+  const handleTagselectedChange = (e: any) => {
+    form.setFieldValue("tagLish", "");
+    if (e && !tagList.includes(e)) {
+      setTagList([...tagList, e]);
+    }
+  };
+
   const handleTagInputConfirm = () => {
+    form.setFieldValue("tagLish", "");
     if (inputTag && !tagList.includes(inputTag)) {
       setTagList([...tagList, inputTag]);
       setInputTag("");
@@ -158,13 +165,17 @@ const Editor = () => {
                 >
                   <TextArea rows={9} />
                 </Form.Item>
-                <Form.Item label="Tag List">
-                  <Input
-                    name="tagLish"
-                    value={inputTag}
-                    onChange={handleTagInputChange}
-                    onKeyDown={handleTagInputKeyDown}
-                  />
+                <Form.Item label="Tag List" name="tagLish">
+                  <AutoComplete
+                    onSelect={handleTagselectedChange}
+                    options={tagsPopular.map((tag: any) => ({ value: tag }))}
+                  >
+                    <Input
+                      value={inputTag}
+                      onChange={handleTagInputChange}
+                      onKeyDown={handleTagInputKeyDown}
+                    />
+                  </AutoComplete>
                 </Form.Item>
 
                 <Form.Item wrapperCol={{ offset: 4, span: 24 }}>
@@ -174,6 +185,7 @@ const Editor = () => {
                         color="green"
                         closable
                         onClose={() => handleTagClose(tag)}
+                        className="d-flex justify-content-center align-items-center"
                       >
                         {tag}
                       </Tag>

@@ -5,6 +5,8 @@ const initialState = {
         title: "",
         description: "",
         body: "",
+        favoritesCount: 0,
+        favorited: "",
         tagList: "",
 
     }
@@ -15,11 +17,14 @@ export const articleSlice = createSlice({
     initialState,
     reducers: {
         infoArticle: (state, action) => {
-            const { title, description, body, tagList } = action.payload
+            const { title, description, body, tagList, favoritesCount, favorited } = action.payload
             state.article.title = title;
             state.article.description = description;
             state.article.body = body;
+            state.article.favoritesCount = favoritesCount;
+            state.article.favorited = favorited;
             state.article.tagList = tagList;
+
         },
 
     },

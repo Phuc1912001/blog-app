@@ -8,7 +8,8 @@ import Editor from "./pages/Editor";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import Article from "./pages/Article";
-import NhapApi from "./pages/Nhap";
+
+import AnotherComponent from "./pages/Nhap";
 
 const router = createBrowserRouter([
   {
@@ -49,14 +50,18 @@ const router = createBrowserRouter([
       },
       {
         path: "nhap",
-        element: <NhapApi />,
+        element: <AnotherComponent />,
       },
     ],
   },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+    </>
+  );
 }
 
 export default App;

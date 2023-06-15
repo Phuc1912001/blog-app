@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import Loading from "../Loading";
 
-const Comment = ({ user, article }: any) => {
-  const [allComment, setAllComment] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [fetchedComments, setFetchedComments] = useState<boolean>(false);
+const Comment = ({ user, article, setAllCommentInBlog = () => {} }: any) => {
   const [form] = Form.useForm();
+  const [allComment, setAllComment] = useState<any>([]);
+  const [fetchedComments, setFetchedComments] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchComment = async () => {
     setLoading(true);
@@ -17,6 +17,9 @@ const Comment = ({ user, article }: any) => {
       `${process.env.REACT_APP_API_URL}/articles/${article?.slug}/comments`
     );
     setAllComment(commentGet?.data?.comments);
+    if (typeof setAllCommentInBlog === "function") {
+      setAllCommentInBlog(commentGet?.data?.comments);
+    }
     setFetchedComments(true);
     setLoading(false);
   };
@@ -28,7 +31,7 @@ const Comment = ({ user, article }: any) => {
   }, [fetchedComments]);
 
   const onFinish = async (values: any) => {
-    setLoading(true);
+    form.resetFields();
     const commentValues = {
       comment: {
         body: values.body,
@@ -40,8 +43,6 @@ const Comment = ({ user, article }: any) => {
     );
     console.log("commentPost", commentPost);
     setFetchedComments(false);
-    form.resetFields();
-    setLoading(false);
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -67,53 +68,64 @@ const Comment = ({ user, article }: any) => {
         className="d-flex align-items-center gap-2 text-danger "
         onClick={() => handleDeleteComment(id)}
       >
-        <DeleteOutlined /> Comment
+        <DeleteOutlined /> Delete
       </div>
     </div>
   );
   return (
     <div>
       <Loading isLoading={loading}>
-        {allComment.length === 0 ? (
-          <div className="mt-3">you no have comment</div>
-        ) : (
-          <div>
-            {allComment.map((comment: any, index: number) => (
-              <div
-                key={index}
-                className="d-flex flex-wrap align-items-center gap-2 mt-4"
-              >
-                <div>
-                  <img
-                    src={comment?.author?.image}
-                    alt="avatar"
+        {allComment && allComment.length > 0 ? (
+          <>
+            <div>
+              {allComment.map((comment: any, index: number) => (
+                <div
+                  key={index}
+                  className="d-flex flex-wrap align-items-center gap-2 mt-4"
+                >
+                  <div>
+                    <img
+                      src={comment?.author?.image}
+                      alt="avatar"
+                      style={{
+                        height: "30px",
+                        width: "30px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                  <div
+                    className="comment-content p-2 "
                     style={{
-                      height: "30px",
-                      width: "30px",
-                      borderRadius: "50%",
-                      objectFit: "cover",
+                      borderRadius: "25px",
+                      backgroundColor: "rgb(230,255,251)",
                     }}
-                  />
-                </div>
-                <div className="comment-content">{comment.body}</div>
-                <div>{moment(comment.createdAt).format("h")}h</div>
-                <div>
-                  <Popover
-                    placement="rightTop"
-                    content={() => content(comment.id)}
-                    trigger="hover"
                   >
-                    <div role="button">
-                      <MoreOutlined className="fs-5 fw-bold " />
-                    </div>
-                  </Popover>
+                    {comment.body}
+                  </div>
+                  <div className="text-secondary">
+                    {moment(comment.createdAt).fromNow()}
+                  </div>
+                  <div>
+                    <Popover
+                      placement="rightTop"
+                      content={() => content(comment.id)}
+                      trigger="hover"
+                    >
+                      <div role="button">
+                        <MoreOutlined className="fs-5 fw-bold " />
+                      </div>
+                    </Popover>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="mt-3 text-secondary "> There are no comments yet</div>
         )}
       </Loading>
-
       <div className="d-flex  align-items-center gap-2 mt-4 ">
         <div>
           <img
@@ -141,7 +153,12 @@ const Comment = ({ user, article }: any) => {
           <Form.Item
             className="m-0"
             name="body"
-            rules={[{ required: true, message: "Please input your comment!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input your comment!",
+              },
+            ]}
           >
             <Input
               placeholder="comment of you..."

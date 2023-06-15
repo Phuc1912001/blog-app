@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tag, Space, Button } from "antd";
-import { CommentOutlined, SendOutlined } from "@ant-design/icons";
+
+import { CommentOutlined, HeartFilled } from "@ant-design/icons";
 
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -11,13 +12,30 @@ import { useSelector } from "react-redux";
 import { RootState } from "../Redux/type";
 import Comment from "./Comment/Comment";
 
-const Blogs = ({ article }: any) => {
+import { api } from "../services/AxiosInstance";
+
+const Blogs = ({ article, imageUrl }: any) => {
   const [toggleComment, setToggleComment] = useState(false);
-  console.log("alo");
+  const [favoriteCount, setFavoriteCount] = useState(0);
+  const [allCommentInBlog, setAllCommentInBlog] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const user: any = useSelector((state: RootState) => state.user.user);
+  const articleRedux: any = useSelector(
+    (state: RootState) => state.article.article
+  );
 
   const navigate = useNavigate();
+
+  const fetchComment = async () => {
+    const commentBlog = await api.get(
+      `${process.env.REACT_APP_API_URL}/articles/${article?.slug}/comments`
+    );
+    setAllCommentInBlog(commentBlog?.data?.comments);
+  };
+  useEffect(() => {
+    fetchComment();
+  }, []);
 
   const { author, tagList } = article;
   const handleDetailBlog = () => {
@@ -37,29 +55,29 @@ const Blogs = ({ article }: any) => {
   };
 
   return (
-    <div className="shadow rounded p-5 m-4 ">
+    <div className="shadow rounded p-4 m-4 ">
       <div className="d-flex align-items-center justify-content-between">
         <div className="d-flex align-items-center justify-content-center  gap-3">
           <img
             src={author.image}
             alt="avatar"
             style={{
-              height: "50px",
-              width: "50px",
+              height: "40px",
+              width: "40px",
               borderRadius: "50%",
               objectFit: "cover",
             }}
           />
           <div>
-            <h6
+            <div
               role="button"
               className="text-warning"
               onClick={handleProfileUser}
             >
               {author.username}
-            </h6>
+            </div>
             <div className="text-secondary">
-              {moment(article.createdAt).format("MMMM D, YYYY")}
+              {moment(article.createdAt).fromNow()}
             </div>
           </div>
         </div>
@@ -73,17 +91,22 @@ const Blogs = ({ article }: any) => {
       </div>
       <div className="mt-2 mb-2" role="button" onClick={handleDetailBlog}>
         <div>
-          <h5>{article.title}</h5>
+          <p>{article.title}</p>
         </div>
-        <div>
-          <p className="text-secondary">{article.description}</p>
+        <div className="wrapper-img">
+          <img src={`${imageUrl}`} className="img-blog" alt="" />
         </div>
-        <div className="d-flex align-items-center justify-content-between mb-2">
+
+        <div className="d-flex align-items-center justify-content-between mt-2 mb-2">
           <div className="text-secondary"></div>
           <div>
             <Space size={[0, 8]} wrap>
               {tagList.map((tag: string, index: number) => (
-                <Tag key={index} color="magenta">
+                <Tag
+                  key={index}
+                  color="magenta"
+                  className="d-flex justify-content-center align-items-center"
+                >
                   {tag}
                 </Tag>
               ))}
@@ -91,9 +114,23 @@ const Blogs = ({ article }: any) => {
           </div>
         </div>
       </div>
-      <div className="d-flex align-items-center justify-content-between">
+      <div className="d-flex align-items-center justify-content-between ">
+        <div className="d-flex align-items-center gap-1 ">
+          <div className="d-flex align-items-center text-danger ">
+            <HeartFilled />
+          </div>
+          <div> {favoriteCount}</div>
+        </div>
+        <div>{allCommentInBlog.length} comment</div>
+      </div>
+      <hr />
+      <div className="d-flex align-items-center justify-content-around">
         <div>
-          <FavoriteButton article={article} />
+          <FavoriteButton
+            article={article}
+            favoriteCount={favoriteCount}
+            setFavoriteCount={setFavoriteCount}
+          />
         </div>
         <div>
           <Button onClick={handleToggleComment} icon={<CommentOutlined />}>
@@ -101,7 +138,19 @@ const Blogs = ({ article }: any) => {
           </Button>
         </div>
       </div>
-      {toggleComment && <Comment user={user} article={article} />}
+
+      {toggleComment && (
+        <>
+          <hr />
+          <Comment
+            user={user}
+            article={article}
+            setAllCommentInBlog={setAllCommentInBlog}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        </>
+      )}
     </div>
   );
 };

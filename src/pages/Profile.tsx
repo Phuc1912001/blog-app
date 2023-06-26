@@ -35,10 +35,8 @@ const Profile = () => {
   const [pageSize] = useState<number>(5);
 
   const fetchProfileUser = async () => {
-    setLoading(true);
     const response = await api.get(`/profiles/${username}`);
     setProfile(response.data.profile);
-    setLoading(false);
   };
 
   const fetchMyFavoriteArticle = async () => {
@@ -117,25 +115,24 @@ const Profile = () => {
           </div>
 
           <div className="d-flex align-items-center justify-content-between  ">
-            <Loading isLoading={loading}>
-              <div className="d-flex align-items-center gap-3">
-                <img
-                  src={profile?.image}
-                  alt="avatar"
-                  className="img-undercover"
-                  onError={(e: any) => {
-                    e.target.src =
-                      "https://bizweb.dktcdn.net/100/321/653/themes/738854/assets/no-product.jpg?1685344097426";
-                  }}
-                />
-                <div>
-                  <h5 role="button" className="text-dark  ">
-                    {profile?.username}
-                  </h5>
-                  <span>500 friend</span>
-                </div>
+            <div className="d-flex align-items-center gap-3">
+              <img
+                src={profile?.image}
+                alt="avatar"
+                className="img-undercover"
+                onError={(e: any) => {
+                  e.target.src =
+                    "https://bizweb.dktcdn.net/100/321/653/themes/738854/assets/no-product.jpg?1685344097426";
+                }}
+              />
+              <div>
+                <h5 role="button" className="text-dark  ">
+                  {profile?.username}
+                </h5>
+                <span>500 friend</span>
               </div>
-            </Loading>
+            </div>
+
             <div className="btn-message">
               <Button
                 className="d-flex align-items-center  "

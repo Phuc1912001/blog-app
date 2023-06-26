@@ -22,6 +22,7 @@ export const FavoriteButton = ({
   setFavoriteCount,
 }: IProps) => {
   const [toggleFavorited, setToggleFavorited] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false); // New state to manage button disabled state
 
   useEffect(() => {
     if (article) {
@@ -36,6 +37,8 @@ export const FavoriteButton = ({
   // toggleFavorite
   const toggleFavorite = async () => {
     if (user.username) {
+      setIsButtonDisabled(true); // Disable the button before making the API call
+
       setFavoriteCount(toggleFavorited ? favoriteCount - 1 : favoriteCount + 1);
       setToggleFavorited(!toggleFavorited);
       const requestToggleFavorite = toggleFavorited ? api.delete : api.post;
@@ -56,6 +59,8 @@ export const FavoriteButton = ({
         setFavoriteCount(
           article.favorited ? favoriteCount + 1 : favoriteCount - 1
         );
+      } finally {
+        setIsButtonDisabled(false); // Re-enable the button after API call is completed (success or error)
       }
     } else {
       navigate(`/login`);
@@ -69,6 +74,7 @@ export const FavoriteButton = ({
           icon={<HeartFilled />}
           className={`${toggleFavorited ? "favoriteBtn" : "unFavoriteBtn"}`}
           onClick={toggleFavorite}
+          disabled={isButtonDisabled} // Add the disabled prop to the Button component
         >
           Heart
         </Button>

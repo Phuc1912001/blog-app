@@ -13,6 +13,7 @@ interface IPropArticle {
 
 export const FollowButton = ({ article }: IPropArticle) => {
   const [toggleFollowed, setToggleFollowed] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false); // New state to manage button disabled state
 
   const user: IUser = useSelector((state: RootState) => state.user.user);
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ export const FollowButton = ({ article }: IPropArticle) => {
 
   const toggleFollowing = async () => {
     if (user.username) {
+      setIsButtonDisabled(true);
+
       setToggleFollowed(!toggleFollowed);
       const requestToggleFollow = toggleFollowed ? api.delete : api.post;
       try {
@@ -38,6 +41,8 @@ export const FollowButton = ({ article }: IPropArticle) => {
       } catch (error) {
         setToggleFollowed(true); // Đặt lại giá trị ban đầu nếu có lỗi
         message.error(`${error}`);
+      } finally {
+        setIsButtonDisabled(false);
       }
     } else {
       navigate(`/login`);
@@ -49,6 +54,7 @@ export const FollowButton = ({ article }: IPropArticle) => {
       icon={<PlusOutlined />}
       className={`${toggleFollowed ? "followBtn" : "unFollowBtn"}`}
       onClick={toggleFollowing}
+      disabled={isButtonDisabled}
     >
       <span>
         {` ${toggleFollowed ? "unfollowed" : "followed"} `}

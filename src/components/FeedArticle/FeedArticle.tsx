@@ -9,12 +9,19 @@ import { Pagination } from "antd";
 import { IUser } from "../../TypeInTypeScript/TypeUser";
 import { IArticle, IArticleArray } from "../../TypeInTypeScript/TypeArticle";
 
+interface IPropFeedArticle {
+  showArticles: any;
+  pageSize: any;
+  currentPageFeed: any;
+  setCurrentPageFeed: any;
+}
+
 const FeedArticle = ({
   showArticles,
   pageSize,
   currentPageFeed,
   setCurrentPageFeed,
-}: any) => {
+}: IPropFeedArticle) => {
   console.log("đã vao feeed Article");
 
   const [loading, setLoading] = useState<boolean>(false);

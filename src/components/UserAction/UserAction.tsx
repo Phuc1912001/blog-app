@@ -3,6 +3,16 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { FavoriteButton } from "../Button/FavoriteButton";
 import { FollowButton } from "../Button/FollowButton";
 import * as message from "../../components/Message";
+import { IUser } from "../../TypeInTypeScript/TypeUser";
+import { IArticle } from "../../TypeInTypeScript/TypeArticle";
+interface IpropUserAction {
+  article: any;
+  user: IUser;
+  handleEdit: any;
+  confirm: any;
+  favoriteCount: any;
+  setFavoriteCount: any;
+}
 
 const UserAction = ({
   article,
@@ -11,7 +21,7 @@ const UserAction = ({
   confirm,
   favoriteCount,
   setFavoriteCount,
-}: any) => {
+}: IpropUserAction) => {
   const cancel = () => {
     message.warning("Close Popconfirm ");
   };

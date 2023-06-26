@@ -7,8 +7,11 @@ import * as message from "../../components/Message";
 import { useEffect, useState } from "react";
 import { api } from "../../services/AxiosInstance";
 import { IUser } from "../../TypeInTypeScript/TypeUser";
+interface IPropArticle {
+  article: any;
+}
 
-export const FollowButton = ({ article }: any) => {
+export const FollowButton = ({ article }: IPropArticle) => {
   const [toggleFollowed, setToggleFollowed] = useState(false);
 
   const user: IUser = useSelector((state: RootState) => state.user.user);

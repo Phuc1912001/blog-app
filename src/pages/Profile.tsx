@@ -18,28 +18,27 @@ import Loading from "../components/Loading";
 import { api } from "../services/AxiosInstance";
 import { dataImage } from "../dataImage/dataImage";
 import MyArticle from "../components/MyArticle/MyArticle";
+import { truncate } from "lodash";
 
 const Profile = () => {
   const params = useParams();
   const [profile, setProfile] = useState<any>(null);
-
   const [favoriteArticles, setFavoriteArticles] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("my-article");
   const [show, setShow] = useState<string>("my-article");
-
   const { username } = params;
-
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [currentPageMyArticle, setCurrentPageMyArticle] = useState<number>(1);
-
   const [totalItemsOfFavoriteArticle, setTotalItemsOfFavoriteArticle] =
     useState<number>(0);
   const [pageSize] = useState<number>(5);
 
   const fetchProfileUser = async () => {
+    setLoading(true);
     const response = await api.get(`/profiles/${username}`);
     setProfile(response.data.profile);
+    setLoading(false);
   };
 
   const fetchMyFavoriteArticle = async () => {
@@ -118,25 +117,25 @@ const Profile = () => {
           </div>
 
           <div className="d-flex align-items-center justify-content-between  ">
-            <div className="d-flex align-items-center gap-3">
-              <img
-                src={profile?.image}
-                alt="avatar"
-                style={{
-                  height: "100px",
-                  width: "100px",
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  border: " 2px solid white ",
-                }}
-              />
-              <div>
-                <h5 role="button" className="text-dark  ">
-                  {profile?.username}
-                </h5>
-                <span>500 friend</span>
+            <Loading isLoading={loading}>
+              <div className="d-flex align-items-center gap-3">
+                <img
+                  src={profile?.image}
+                  alt="avatar"
+                  className="img-undercover"
+                  onError={(e: any) => {
+                    e.target.src =
+                      "https://bizweb.dktcdn.net/100/321/653/themes/738854/assets/no-product.jpg?1685344097426";
+                  }}
+                />
+                <div>
+                  <h5 role="button" className="text-dark  ">
+                    {profile?.username}
+                  </h5>
+                  <span>500 friend</span>
+                </div>
               </div>
-            </div>
+            </Loading>
             <div className="btn-message">
               <Button
                 className="d-flex align-items-center  "
@@ -182,6 +181,10 @@ const Profile = () => {
                     src={`${image.imageUrl}`}
                     alt=""
                     className="img-profile "
+                    onError={(e: any) => {
+                      e.target.src =
+                        "https://bizweb.dktcdn.net/100/321/653/themes/738854/assets/no-product.jpg?1685344097426";
+                    }}
                   />
                 </Col>
               ))}

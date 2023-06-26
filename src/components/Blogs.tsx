@@ -15,7 +15,12 @@ import Comment from "./Comment/Comment";
 import { api } from "../services/AxiosInstance";
 import { IUser } from "../TypeInTypeScript/TypeUser";
 
-const Blogs = ({ article, imageUrl }: any) => {
+interface IPropsBlog {
+  article: any;
+  imageUrl: any;
+}
+
+const Blogs = ({ article, imageUrl }: IPropsBlog) => {
   const [toggleComment, setToggleComment] = useState(false);
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [allCommentInBlog, setAllCommentInBlog] = useState<any>([]);
@@ -64,16 +69,7 @@ const Blogs = ({ article, imageUrl }: any) => {
     <div className="shadow rounded p-4 m-4 ">
       <div className="d-flex align-items-center justify-content-between ">
         <div className="d-flex align-items-center justify-content-center  gap-3">
-          <img
-            src={author.image}
-            alt="avatar"
-            style={{
-              height: "40px",
-              width: "40px",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
-          />
+          <img src={author.image} alt="avatar" className="img-avatar-blog" />
           <div>
             <div
               role="button"
@@ -122,7 +118,15 @@ const Blogs = ({ article, imageUrl }: any) => {
       </div>
       <div className="mt-2 mb-2" role="button" onClick={handleDetailBlog}>
         <div className="wrapper-img">
-          <img src={`${imageUrl}`} className="img-blog" alt="" />
+          <img
+            src={`${imageUrl}`}
+            className="img-blog"
+            alt=""
+            onError={(e: any) => {
+              e.target.src =
+                "https://bizweb.dktcdn.net/100/321/653/themes/738854/assets/no-product.jpg?1685344097426";
+            }}
+          />
         </div>
 
         <div className="d-flex align-items-center justify-content-between mt-2 mb-2">

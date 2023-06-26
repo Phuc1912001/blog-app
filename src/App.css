@@ -2,6 +2,23 @@
   font-weight: 800;
 }
 
+.img-avatar-header {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.img-avatar-blog {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+
+
 .text-warning:hover {
   text-decoration: underline;
 }
@@ -146,7 +163,9 @@
   width: 700px;
 }
 
-
+.form-setting {
+  width: 600px;
+}
 
 .img-profile {
   width: 100%;
@@ -179,10 +198,28 @@
   object-fit: cover;
 }
 
+.img-undercover {
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+
 @media only screen and (min-width: 768px) and (max-width: 1024px) {
   .form-article {
     width: 500px;
 
+  }
+
+  .form-acount {
+    width: 500px;
+  }
+
+
+  .form-setting {
+    width: 100%;
   }
 
   .follow-blog {
@@ -206,7 +243,13 @@
 }
 
 @media (max-width: 767px) {
+  .form-acount {
+    width: 100%;
+  }
 
+  .form-setting {
+    width: 100%;
+  }
 
   .form-article {
     width: 100%;
@@ -225,11 +268,7 @@
     height: 250px;
   }
 
-  .acount-profile {
-    position: absolute;
-    top: 21%;
-    width: 80%;
-  }
+
 
   .btn-message {
     display: none;

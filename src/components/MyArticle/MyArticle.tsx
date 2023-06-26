@@ -6,13 +6,21 @@ import { api } from "../../services/AxiosInstance";
 import { Pagination } from "antd";
 import { IArticleArray } from "../../TypeInTypeScript/TypeArticle";
 
+interface IPropMyArticle {
+  show: any;
+  currentPageMyArticle: any;
+  pageSize: any;
+  username: any;
+  setCurrentPageMyArticle: any;
+}
+
 const MyArticle = ({
   show,
   currentPageMyArticle,
   pageSize,
   username,
   setCurrentPageMyArticle,
-}: any) => {
+}: IPropMyArticle) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [myArticles, setMyArticles] = useState<IArticleArray>([]);
   const [totalItemsOfMyArticle, setTotalItemsOfMyArticle] =

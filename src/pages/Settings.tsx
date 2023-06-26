@@ -70,7 +70,7 @@ const Settings = () => {
 
           <Loading isLoading={loading}>
             <Form
-              className="shadow p-5 form-acount "
+              className="shadow p-5 form-setting "
               name="basic"
               labelCol={{ span: 24 }}
               wrapperCol={{ span: 24 }}

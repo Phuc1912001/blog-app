@@ -8,8 +8,6 @@ import Editor from "./pages/Editor";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import Article from "./pages/Article";
-
-import AnotherComponent from "./pages/Nhap";
 import { createContext, useState } from "react";
 
 const router = createBrowserRouter([
@@ -48,10 +46,6 @@ const router = createBrowserRouter([
       {
         path: "articles/:slug",
         element: <Article />,
-      },
-      {
-        path: "nhap",
-        element: <AnotherComponent />,
       },
     ],
   },

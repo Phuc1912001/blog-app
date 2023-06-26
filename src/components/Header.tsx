@@ -11,7 +11,6 @@ import {
 } from "@ant-design/icons";
 import { Popover } from "antd";
 import { resetUser } from "../Redux/feature/userSlice";
-import Notify from "./Notify";
 import { IUser } from "../TypeInTypeScript/TypeUser";
 
 const Header = () => {
@@ -108,12 +107,7 @@ const Header = () => {
                     <img
                       src={user.image}
                       alt="avatar"
-                      style={{
-                        height: "30px",
-                        width: "30px",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                      }}
+                      className="img-avatar-header"
                     />
                     {user.username}
                   </div>
@@ -138,8 +132,6 @@ const Header = () => {
           </div>
         </Col>
       </Row>
-
-      <Notify />
     </Container>
   );
 };

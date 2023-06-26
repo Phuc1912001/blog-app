@@ -109,12 +109,7 @@ const Article = () => {
                     <img
                       src={article.author.image}
                       alt="avatar"
-                      style={{
-                        height: "40px",
-                        width: "40px",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                      }}
+                      className="img-avatar-blog"
                     />
                   )}
                   <div>

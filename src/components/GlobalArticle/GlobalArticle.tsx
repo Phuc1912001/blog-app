@@ -6,12 +6,19 @@ import { dataImage } from "../../dataImage/dataImage";
 import { Pagination } from "antd";
 import { IArticle, IArticleArray } from "../../TypeInTypeScript/TypeArticle";
 
+interface IPropGlobalArticle {
+  showArticles: any;
+  currentPageGlobal: any;
+  pageSize: any;
+  setCurrentPageGlobal: any;
+}
+
 const GlobalArticle = ({
   showArticles,
   currentPageGlobal,
   pageSize,
   setCurrentPageGlobal,
-}: any) => {
+}: IPropGlobalArticle) => {
   console.log("đã vao global Article");
 
   const [loading, setLoading] = useState<boolean>(false);

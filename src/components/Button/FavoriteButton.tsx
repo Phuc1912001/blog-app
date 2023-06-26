@@ -1,71 +1,61 @@
 import { Button } from "antd";
 import { HeartFilled } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Redux/type";
 import { useNavigate } from "react-router-dom";
-import Notify from "../../components/Notify";
 import { api } from "../../services/AxiosInstance";
-import axios from "axios";
 import * as message from "../../components/Message";
+import { IUser } from "../../TypeInTypeScript/TypeUser";
+import { IArticle } from "../../TypeInTypeScript/TypeArticle";
+
+interface IProps {
+  article: IArticle;
+  favoriteCount: number;
+  setFavoriteCount: Dispatch<number>;
+  // abcd?: () => void;
+}
 
 export const FavoriteButton = ({
   article,
   favoriteCount,
   setFavoriteCount,
-}: any) => {
-  const [loading, setLoading] = useState<boolean>(false);
+}: IProps) => {
   const [toggleFavorited, setToggleFavorited] = useState(false);
 
   useEffect(() => {
-    setToggleFavorited(article?.favorited);
+    if (article) {
+      setToggleFavorited(article.favorited);
+      setFavoriteCount(article.favoritesCount);
+    }
   }, [article]);
 
-  useEffect(() => {
-    setFavoriteCount(article?.favoritesCount);
-  }, [article]);
-
-  const user: any = useSelector((state: RootState) => state.user.user);
+  const user: IUser = useSelector((state: RootState) => state.user.user);
   const navigate = useNavigate();
 
   // toggleFavorite
-  // toggleFavorite
   const toggleFavorite = async () => {
     if (user.username) {
-      if (!toggleFavorited) {
-        try {
-          setToggleFavorited(true); // Đổi màu trước khi gọi API
+      setFavoriteCount(toggleFavorited ? favoriteCount - 1 : favoriteCount + 1);
+      setToggleFavorited(!toggleFavorited);
+      const requestToggleFavorite = toggleFavorited ? api.delete : api.post;
+      try {
+        const dataToggleFavortite = await requestToggleFavorite(
+          `/articles/${article?.slug}/favorite`
+        );
+        setFavoriteCount(dataToggleFavortite.data.article.favoritesCount);
 
-          const favorited = await api.post(
-            `${process.env.REACT_APP_API_URL}/articles/${article?.slug}/favorite`
-          );
-
-          setFavoriteCount(favorited.data.article.favoritesCount);
-          message.success("Favorite Article is successful");
-        } catch (error) {
-          setToggleFavorited(false); // Đặt lại giá trị ban đầu nếu có lỗi
-          message.error(`${error}`);
-        }
-      } else {
-        console.log("thực hiện UnFavorite");
-        setToggleFavorited(false); // Đổi màu trước khi gọi API
-
-        try {
-          const unFavorited = await axios.delete(
-            `${process.env.REACT_APP_API_URL}/articles/${article?.slug}/favorite`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-            }
-          );
-
-          setFavoriteCount(unFavorited.data.article.favoritesCount);
-          message.success("Unfavorite Article is successful");
-        } catch (error) {
-          setToggleFavorited(true); // Đặt lại giá trị ban đầu nếu có lỗi
-          message.error(`${error}`);
-        }
+        // if (toggleFavorited) {
+        //   message.success("Unfavorite Article is successful");
+        // } else {
+        //   message.success("Favorite Article is successful");
+        // }
+      } catch (error) {
+        setToggleFavorited(false); // Đặt lại giá trị ban đầu nếu có lỗi
+        message.error(`${error}`);
+        setFavoriteCount(
+          article.favorited ? favoriteCount + 1 : favoriteCount - 1
+        );
       }
     } else {
       navigate(`/login`);
@@ -77,14 +67,7 @@ export const FavoriteButton = ({
       {favoriteCount !== undefined && (
         <Button
           icon={<HeartFilled />}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            color: toggleFavorited ? "white" : "#DC143C",
-            backgroundColor: toggleFavorited ? "#DC143C" : "inherit",
-            border: `1px solid ${toggleFavorited ? "" : "#DC143C"}`,
-          }}
-          ghost={!toggleFavorited}
+          className={`${toggleFavorited ? "favoriteBtn" : "unFavoriteBtn"}`}
           onClick={toggleFavorite}
         >
           Heart

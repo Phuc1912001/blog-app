@@ -13,24 +13,21 @@ import { RootState } from "../Redux/type";
 import Comment from "./Comment/Comment";
 
 import { api } from "../services/AxiosInstance";
+import { IUser } from "../TypeInTypeScript/TypeUser";
 
 const Blogs = ({ article, imageUrl }: any) => {
   const [toggleComment, setToggleComment] = useState(false);
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [allCommentInBlog, setAllCommentInBlog] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [showFullTitle, setShowFullTitle] = useState(false);
 
-  const user: any = useSelector((state: RootState) => state.user.user);
-  const articleRedux: any = useSelector(
-    (state: RootState) => state.article.article
-  );
+  const user: IUser = useSelector((state: RootState) => state.user.user);
 
   const navigate = useNavigate();
 
   const fetchComment = async () => {
-    const commentBlog = await api.get(
-      `${process.env.REACT_APP_API_URL}/articles/${article?.slug}/comments`
-    );
+    const commentBlog = await api.get(`/articles/${article?.slug}/comments`);
     setAllCommentInBlog(commentBlog?.data?.comments);
   };
   useEffect(() => {
@@ -53,10 +50,19 @@ const Blogs = ({ article, imageUrl }: any) => {
       navigate(`/login`);
     }
   };
+  const handleClickReadMore = () => {
+    setShowFullTitle(true);
+  };
+
+  const handleClickHide = () => {
+    setShowFullTitle(false);
+  };
+
+  const truncatedTitle = article?.title?.substring(0, 50);
 
   return (
     <div className="shadow rounded p-4 m-4 ">
-      <div className="d-flex align-items-center justify-content-between">
+      <div className="d-flex align-items-center justify-content-between ">
         <div className="d-flex align-items-center justify-content-center  gap-3">
           <img
             src={author.image}
@@ -77,11 +83,13 @@ const Blogs = ({ article, imageUrl }: any) => {
               {author.username}
             </div>
             <div className="text-secondary">
-              {moment(article.createdAt).fromNow()}
+              {article?.updatedAt
+                ? moment(article?.updatedAt).fromNow()
+                : moment(article?.createdAt).fromNow()}
             </div>
           </div>
         </div>
-        <div>
+        <div className="follow-blog">
           {article?.author?.username === user.username ? (
             ""
           ) : (
@@ -89,10 +97,30 @@ const Blogs = ({ article, imageUrl }: any) => {
           )}
         </div>
       </div>
+      <div className="mb-2">
+        <p className="mb-0">
+          {showFullTitle ? article?.title : truncatedTitle}
+        </p>
+        {!showFullTitle && article?.title && article?.title.length > 50 && (
+          <span
+            onClick={handleClickReadMore}
+            className="text-propover "
+            role="button"
+          >
+            ...Read More
+          </span>
+        )}
+        {showFullTitle && article?.title && article?.title.length > 50 && (
+          <span
+            onClick={handleClickHide}
+            className="text-propover "
+            role="button"
+          >
+            Hide
+          </span>
+        )}
+      </div>
       <div className="mt-2 mb-2" role="button" onClick={handleDetailBlog}>
-        <div>
-          <p>{article.title}</p>
-        </div>
         <div className="wrapper-img">
           <img src={`${imageUrl}`} className="img-blog" alt="" />
         </div>
@@ -133,7 +161,11 @@ const Blogs = ({ article, imageUrl }: any) => {
           />
         </div>
         <div>
-          <Button onClick={handleToggleComment} icon={<CommentOutlined />}>
+          <Button
+            className="d-flex align-items-center"
+            onClick={handleToggleComment}
+            icon={<CommentOutlined />}
+          >
             Comment
           </Button>
         </div>

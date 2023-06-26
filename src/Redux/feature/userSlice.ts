@@ -21,7 +21,6 @@ export const userSlice = createSlice({
             state.user.username = username;
             state.user.bio = bio ? bio : state.user.bio;
             state.user.image = image;
-
         },
         resetUser: (state) => {
             state.user.email = '';
@@ -30,6 +29,7 @@ export const userSlice = createSlice({
             state.user.bio = '';
             state.user.image = '';
         },
+
     },
 })
 

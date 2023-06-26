@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,9 +12,10 @@ import {
 import { Popover } from "antd";
 import { resetUser } from "../Redux/feature/userSlice";
 import Notify from "./Notify";
+import { IUser } from "../TypeInTypeScript/TypeUser";
 
 const Header = () => {
-  const user: any = useSelector((state: RootState) => state.user.user);
+  const user: IUser = useSelector((state: RootState) => state.user.user);
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -83,7 +84,7 @@ const Header = () => {
   return (
     <Container>
       <Row>
-        <Col className="d-flex align-items-center justify-content-between">
+        <Col className="d-flex align-items-center justify-content-between ">
           <NavLink
             className="text-decoration-none fw-bold fs-5 text-danger "
             to={"/"}

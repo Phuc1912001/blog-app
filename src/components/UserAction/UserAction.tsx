@@ -1,9 +1,8 @@
-import { Button, Space, Tag, Popconfirm } from "antd";
+import { Button, Popconfirm } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { FavoriteButton } from "../Button/FavoriteButton";
 import { FollowButton } from "../Button/FollowButton";
 import * as message from "../../components/Message";
-import { useState } from "react";
 
 const UserAction = ({
   article,

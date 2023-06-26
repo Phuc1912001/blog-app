@@ -1,5 +1,3 @@
-import React from "react";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
@@ -15,8 +13,7 @@ import {
   FieldTimeOutlined,
   PictureOutlined,
 } from "@ant-design/icons";
-import { useSelector } from "react-redux";
-import { RootState } from "../Redux/type";
+
 import Loading from "../components/Loading";
 import { api } from "../services/AxiosInstance";
 import { dataImage } from "../dataImage/dataImage";
@@ -37,15 +34,11 @@ const Profile = () => {
   const [currentPageMyArticle, setCurrentPageMyArticle] = useState<number>(1);
 
   const [totalItemsOfFavoriteArticle, setTotalItemsOfFavoriteArticle] =
-    useState<number>(197);
+    useState<number>(0);
   const [pageSize] = useState<number>(5);
 
-  const user: any = useSelector((state: RootState) => state.user.user);
-
   const fetchProfileUser = async () => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/profiles/${username}`
-    );
+    const response = await api.get(`/profiles/${username}`);
     setProfile(response.data.profile);
   };
 
@@ -53,7 +46,7 @@ const Profile = () => {
     setLoading(true);
     const offset = (currentPage - 1) * pageSize;
     const myFavoriteArticle = await api.get(
-      `${process.env.REACT_APP_API_URL}/articles?favorited=${username}&limit=${pageSize}&offset=${offset}`
+      `/articles?favorited=${username}&limit=${pageSize}&offset=${offset}`
     );
     const { articles, articlesCount } = myFavoriteArticle.data;
     setFavoriteArticles(articles);
@@ -114,7 +107,7 @@ const Profile = () => {
     <Container>
       <Row>
         <Col md={12} className="mb-5">
-          <div className="position-relative">
+          <div className="cover-image">
             <img
               src={
                 "https://thcsbevandan.edu.vn/wp-content/uploads/2022/09/anh-bia-dep-ve-phong-canh-thien-nhien-29-9554641.jpg"
@@ -124,42 +117,37 @@ const Profile = () => {
             />
           </div>
 
-          <div
-            className="position-absolute  "
-            style={{ top: "70%", width: "80%" }}
-          >
-            <div className="d-flex align-items-center justify-content-between  ">
-              <div className="d-flex align-items-center gap-3">
-                <img
-                  src={profile?.image}
-                  alt="avatar"
-                  style={{
-                    height: "100px",
-                    width: "100px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    border: " 2px solid white ",
-                  }}
-                />
-                <div>
-                  <h5 role="button" className="text-dark">
-                    {profile?.username}
-                  </h5>
-                  <span>500 friend</span>
-                </div>
-              </div>
+          <div className="d-flex align-items-center justify-content-between  ">
+            <div className="d-flex align-items-center gap-3">
+              <img
+                src={profile?.image}
+                alt="avatar"
+                style={{
+                  height: "100px",
+                  width: "100px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: " 2px solid white ",
+                }}
+              />
               <div>
-                <Button
-                  className="d-flex align-items-center "
-                  icon={<MessageOutlined />}
-                >
-                  Message
-                </Button>
+                <h5 role="button" className="text-dark  ">
+                  {profile?.username}
+                </h5>
+                <span>500 friend</span>
               </div>
+            </div>
+            <div className="btn-message">
+              <Button
+                className="d-flex align-items-center  "
+                icon={<MessageOutlined />}
+              >
+                Message
+              </Button>
             </div>
           </div>
         </Col>
-        <Col className="mt-5 shadow p-3 bg-white rounded " md={4}>
+        <Col className=" shadow p-3 bg-white rounded " md={4}>
           <div className="d-flex align-items-center gap-3 ">
             <HomeOutlined />
             <div> Live in Ha Noi</div>
@@ -180,24 +168,27 @@ const Profile = () => {
             <FieldTimeOutlined />
             <div> join on September 10, 2022</div>
           </div>
-          <hr />
-          <div className="d-flex align-items-center gap-3 mb-3 ">
-            <PictureOutlined />
-            <div> My Image</div>
+
+          <div className="img-profile">
+            <hr />
+            <div className="d-flex align-items-center gap-3 mb-3 ">
+              <PictureOutlined />
+              <div> My Image</div>
+            </div>
+            <Row>
+              {dataImage?.map((image) => (
+                <Col xs={6} md={6} key={image.id} className="mt-2">
+                  <img
+                    src={`${image.imageUrl}`}
+                    alt=""
+                    className="img-profile "
+                  />
+                </Col>
+              ))}
+            </Row>
           </div>
-          <Row>
-            {dataImage?.map((image) => (
-              <Col md={6} key={image.id} className="mt-2">
-                <img
-                  src={`${image.imageUrl}`}
-                  alt=""
-                  className="w-100 h-100 object-fit-cover "
-                />
-              </Col>
-            ))}
-          </Row>
         </Col>
-        <Col className="mt-5" md={8}>
+        <Col md={8}>
           <Tabs activeKey={activeTab} items={items} onChange={onChange} />
 
           {show === "favorite-article" && (

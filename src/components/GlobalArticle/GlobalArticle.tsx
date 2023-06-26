@@ -4,6 +4,7 @@ import { api } from "../../services/AxiosInstance";
 import Blogs from "../Blogs";
 import { dataImage } from "../../dataImage/dataImage";
 import { Pagination } from "antd";
+import { IArticle, IArticleArray } from "../../TypeInTypeScript/TypeArticle";
 
 const GlobalArticle = ({
   showArticles,
@@ -11,15 +12,16 @@ const GlobalArticle = ({
   pageSize,
   setCurrentPageGlobal,
 }: any) => {
+  console.log("đã vao global Article");
+
   const [loading, setLoading] = useState<boolean>(false);
-  const [globalArticles, setGlobalArticles] = useState<any>([]);
+  const [globalArticles, setGlobalArticles] = useState<IArticleArray>([]);
   const [totalItemsOfGlobalArticles, setTotalItemsOfGlobalArticles] =
     useState<number>(300);
-
   const fetchGlobalArticles = async () => {
     setLoading(true);
     const offset = (currentPageGlobal - 1) * pageSize;
-    let apiUrl = `${process.env.REACT_APP_API_URL}/articles?limit=${pageSize}&offset=${offset}`;
+    let apiUrl = `/articles?limit=${pageSize}&offset=${offset}`;
     const response = await api.get(apiUrl);
     const { articles, articlesCount } = response.data;
     setGlobalArticles(articles);
@@ -31,6 +33,10 @@ const GlobalArticle = ({
     fetchGlobalArticles();
   }, [currentPageGlobal]);
 
+  useEffect(() => {
+    fetchGlobalArticles();
+  }, [showArticles]);
+
   const handlePaginationChangeGlobal = (page: number) => {
     setCurrentPageGlobal(page);
   };
@@ -39,7 +45,7 @@ const GlobalArticle = ({
     <div>
       {showArticles === "global-feed" && (
         <Loading isLoading={loading}>
-          {globalArticles.map((article: any) => (
+          {globalArticles.map((article: IArticle) => (
             <div key={article.slug}>
               <Blogs
                 article={article}

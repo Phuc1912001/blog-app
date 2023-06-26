@@ -6,6 +6,56 @@
   text-decoration: underline;
 }
 
+.favoriteBtn {
+  display: flex;
+  align-items: center;
+  color: white;
+  background-color: #DC143C;
+  border: none;
+}
+
+.favoriteBtn:hover {
+  color: white !important;
+}
+
+.unFavoriteBtn {
+  display: flex;
+  align-items: center;
+  color: #DC143C;
+  background-color: inherit;
+  border: 1px solid #DC143C;
+}
+
+.unFavoriteBtn:hover {
+  color: #DC143C !important;
+  border-color: #DC143C !important;
+}
+
+.followBtn {
+  display: flex;
+  align-items: center;
+  color: white;
+  background-color: green;
+  border: none;
+}
+
+.followBtn:hover {
+  color: white !important;
+}
+
+.unFollowBtn {
+  display: flex;
+  align-items: center;
+  color: green;
+  background-color: inherit;
+  border: 1px solid green;
+}
+
+.unFollowBtn:hover {
+  color: green !important;
+  border-color: green !important;
+}
+
 .button-delete {
   border: 1px solid red;
   display: flex;
@@ -85,4 +135,129 @@
 
 .ant-message.ant-message-top {
   z-index: 999999;
+}
+
+
+.form-acount {
+  width: 600px;
+}
+
+.form-article {
+  width: 700px;
+}
+
+
+
+.img-profile {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sidebar {
+  position: sticky;
+  top: 72px;
+  /* Khoảng cách từ đỉnh trang xuống */
+  height: 88vh;
+  /* Chiều cao phù hợp cho phần tử cha */
+}
+
+
+.tab {
+  position: sticky;
+  top: 72px;
+  height: 88vh;
+
+}
+
+.comment-small {
+  display: none;
+}
+
+.img-detail {
+  height: 700px;
+  object-fit: cover;
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .form-article {
+    width: 500px;
+
+  }
+
+  .follow-blog {
+    display: none;
+  }
+
+  .comment-small {
+    display: block;
+  }
+
+  .comment-lage {
+    display: none;
+  }
+
+  .img-detail {
+    height: 500px;
+    object-fit: cover;
+  }
+
+
+}
+
+@media (max-width: 767px) {
+
+
+  .form-article {
+    width: 100%;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .follow-blog {
+    display: none;
+  }
+
+  .wrapper-img {
+
+    height: 250px;
+  }
+
+  .acount-profile {
+    position: absolute;
+    top: 21%;
+    width: 80%;
+  }
+
+  .btn-message {
+    display: none;
+  }
+
+  .detail-article {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .comment-small {
+    display: block;
+  }
+
+  .comment-lage {
+    display: none;
+  }
+
+  .img-detail {
+    height: 400px;
+    object-fit: cover;
+  }
+
+  .tab {
+    display: none;
+  }
+
+  .img-profile {
+    display: none;
+  }
 }

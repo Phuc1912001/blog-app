@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import Article from "./pages/Article";
 
 import AnotherComponent from "./pages/Nhap";
+import { createContext, useState } from "react";
 
 const router = createBrowserRouter([
   {
@@ -56,11 +57,28 @@ const router = createBrowserRouter([
   },
 ]);
 
+export const tabContext = createContext(null);
+
 function App() {
+  const [showArticles, setShowArticle] = useState<string>("global-feed");
+  const [activeTab, setActiveTab] = useState<string>("global-feed");
+  const [currentPageTags, setCurrentPageTags] = useState<number>(1);
+  const [tagParam, setTagParam] = useState<any>("");
+
+  const values: any = {
+    showArticles,
+    setShowArticle,
+    currentPageTags,
+    setCurrentPageTags,
+    tagParam,
+    setTagParam,
+    activeTab,
+    setActiveTab,
+  };
   return (
-    <>
+    <tabContext.Provider value={values}>
       <RouterProvider router={router} />
-    </>
+    </tabContext.Provider>
   );
 }
 

@@ -8,6 +8,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { infoUser } from "../Redux/feature/userSlice";
 import { AppDispatch } from "../Redux/type";
+import { api } from "../services/AxiosInstance";
+interface ILogin {
+  email: string;
+  password: string;
+}
 
 const Login = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -23,38 +28,27 @@ const Login = () => {
     }
     return Promise.reject("Please enter a valid email address!");
   };
-  const onFinish = async (values: any) => {
+
+  const whitespaceValidator = (_: any, value: any) => {
+    if (!value || value.trim() === "") {
+      return Promise.reject("Field cannot contain whitespace only!");
+    }
+    return Promise.resolve();
+  };
+
+  const onFinish = async (values: ILogin) => {
     setLoading(true);
+    const userData = {
+      user: values,
+    };
     try {
-      const userData = {
-        user: {
-          email: values.email,
-          password: values.password,
-        },
-      };
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/users/login`,
-        userData
-      );
-      localStorage.setItem(
-        "token",
-        JSON.stringify(response?.data?.user?.token)
-      );
-      const token = response?.data?.user?.token;
-      console.log("token", token);
-
-      const user = await axios.get(`${process.env.REACT_APP_API_URL}/user`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Thêm thông tin xác thực vào tiêu đề Authorization
-        },
-      });
-
-      dispatch(infoUser(user.data.user));
+      const response = await api.post(`/users/login`, userData);
+      dispatch(infoUser(response?.data?.user));
       message.success("Login is successfully");
       navigate("/");
     } catch (error) {
       console.error("Login failed:", error);
-      message.error(`${error}`);
+      message.error(`email or password is invalid`);
     }
     setLoading(false);
   };
@@ -81,9 +75,9 @@ const Login = () => {
             <Loading isLoading={loading}>
               <Form
                 name="basic"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 20 }}
-                style={{ width: 500 }}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
+                className="form-acount"
                 initialValues={{ remember: true }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
@@ -105,6 +99,7 @@ const Login = () => {
                   name="password"
                   rules={[
                     { required: true, message: "Please input your password!" },
+                    { validator: whitespaceValidator },
                   ]}
                 >
                   <Input.Password />

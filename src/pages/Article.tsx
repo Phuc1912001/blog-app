@@ -1,13 +1,10 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import moment from "moment";
 import { Space, Tag } from "antd";
 import { HeartFilled } from "@ant-design/icons";
-
 import { useNavigate } from "react-router-dom";
-
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/type";
 import { infoArticle } from "../Redux/feature/articleSlice";
@@ -17,18 +14,21 @@ import { api } from "../services/AxiosInstance";
 import UserAction from "../components/UserAction/UserAction";
 import Comment from "../components/Comment/Comment";
 import { dataImage } from "../dataImage/dataImage";
+import { IUser } from "../TypeInTypeScript/TypeUser";
+import { IArticle } from "../TypeInTypeScript/TypeArticle";
 
 const Article = () => {
-  const [article, setArticle] = useState<any>(null);
+  const [article, setArticle] = useState<IArticle | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [articleLoaded, setArticleLoaded] = useState<boolean>(false);
 
-  const [favoriteCount, setFavoriteCount] = useState(0);
+  const [favoriteCount, setFavoriteCount] = useState(article?.favoritesCount);
+  const [showFullTitle, setShowFullTitle] = useState(false);
 
   const params = useParams();
   const { slug } = params;
 
-  const user: any = useSelector((state: RootState) => state.user.user);
+  const user: IUser = useSelector((state: RootState) => state.user.user);
 
   const navigate = useNavigate();
 
@@ -36,9 +36,7 @@ const Article = () => {
 
   const fetchAnArticle = async () => {
     setLoading(true);
-    const response = await api.get(
-      `${process.env.REACT_APP_API_URL}/articles/${slug}`
-    );
+    const response = await api.get(`/articles/${slug}`);
     setArticle(response.data.article);
     dispatch(infoArticle(response.data.article));
     setLoading(false);
@@ -58,15 +56,29 @@ const Article = () => {
   };
 
   const confirm = async () => {
-    await api.delete(`${process.env.REACT_APP_API_URL}/articles/${slug}`);
+    await api.delete(`/articles/${slug}`);
     message.success("Delete is successfully");
     navigate(`/`);
   };
 
+  const fomatBody = article?.body || "";
+  const newBody = fomatBody.replace(/\\n/g, "<br>");
+
+  const truncatedTitle = article?.title?.substring(0, 50);
+
+  const handleClickReadMore = () => {
+    setShowFullTitle(true);
+  };
+
+  const handleClickHide = () => {
+    setShowFullTitle(false);
+  };
+  console.log("article", article?.favoritesCount);
+
   return (
     <Loading isLoading={loading}>
       <Container className="pt-5">
-        <Row>
+        <Row className="detail-article">
           <Col md={8}>
             <div>
               <img
@@ -74,13 +86,19 @@ const Article = () => {
                   dataImage[Math.floor(Math.random() * dataImage.length)]
                     .imageUrl
                 }`}
-                className="w-100 rounded "
-                style={{ height: "700px", objectFit: "cover" }}
+                onError={(e: any) => {
+                  e.target.src =
+                    "https://bizweb.dktcdn.net/100/321/653/themes/738854/assets/no-product.jpg?1685344097426";
+                }}
+                className="w-100 rounded img-detail "
                 alt=""
               />
             </div>
             <div className="mt-2">
-              <p>{article?.body}</p>
+              <div dangerouslySetInnerHTML={{ __html: newBody }} />
+            </div>
+            <div className="comment-small">
+              {articleLoaded && <Comment user={user} article={article} />}
             </div>
           </Col>
           <Col md={4}>
@@ -108,13 +126,39 @@ const Article = () => {
                       {article?.author?.username}
                     </div>
                     <p className="text-secondary">
-                      {moment(article?.createdAt).fromNow()}
+                      {article?.updatedAt
+                        ? moment(article?.updatedAt).fromNow()
+                        : moment(article?.createdAt).fromNow()}
                     </p>
                   </div>
                 </div>
               </div>
-              <h2>{article?.title}</h2>
 
+              <div className="mb-2">
+                <h2>{showFullTitle ? article?.title : truncatedTitle}</h2>
+                {!showFullTitle &&
+                  article?.title &&
+                  article?.title.length > 50 && (
+                    <span
+                      onClick={handleClickReadMore}
+                      className="text-propover "
+                      role="button"
+                    >
+                      ...Read More
+                    </span>
+                  )}
+                {showFullTitle &&
+                  article?.title &&
+                  article?.title.length > 50 && (
+                    <span
+                      onClick={handleClickHide}
+                      className="text-propover "
+                      role="button"
+                    >
+                      Hide
+                    </span>
+                  )}
+              </div>
               <div>
                 {article?.tagList && (
                   <Space size={[0, 8]} wrap>
@@ -126,17 +170,14 @@ const Article = () => {
                   </Space>
                 )}
               </div>
-              {favoriteCount && (
-                <>
-                  <hr />
-                  <div className="d-flex align-items-center gap-1 ">
-                    <div className="d-flex align-items-center text-danger ">
-                      <HeartFilled />
-                    </div>
-                    <div> {favoriteCount}</div>
-                  </div>
-                </>
-              )}
+
+              <hr />
+              <div className="d-flex align-items-center gap-1 ">
+                <div className="d-flex align-items-center text-danger ">
+                  <HeartFilled />
+                </div>
+                <div>{favoriteCount || article?.favoritesCount}</div>
+              </div>
 
               <hr />
               <UserAction
@@ -149,7 +190,7 @@ const Article = () => {
               />
             </Col>
             <hr />
-            <Col md={12}>
+            <Col md={12} className="comment-lage">
               {articleLoaded && <Comment user={user} article={article} />}
             </Col>
           </Col>

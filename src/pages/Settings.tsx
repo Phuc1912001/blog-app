@@ -3,22 +3,18 @@ import { Container, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import Loading from "../components/Loading";
 import * as message from "../components/Message";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
 import { useDispatch, useSelector } from "react-redux";
-import { infoUser, resetUser } from "../Redux/feature/userSlice";
+import { infoUser } from "../Redux/feature/userSlice";
 import { AppDispatch, RootState } from "../Redux/type";
+import { api } from "../services/AxiosInstance";
+import { IUser } from "../TypeInTypeScript/TypeUser";
 
 const { TextArea } = Input;
 
 const Settings = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const user: any = useSelector((state: RootState) => state.user.user);
+  const user: IUser = useSelector((state: RootState) => state.user.user);
   const dispatch = useDispatch<AppDispatch>();
-
-  const navigate = useNavigate();
-
   const [form] = Form.useForm();
 
   const validateEmail = (_: any, value: any) => {
@@ -29,33 +25,24 @@ const Settings = () => {
     }
     return Promise.reject("Please enter a valid email address!");
   };
+  const whitespaceValidator = (_: any, value: any) => {
+    if (!value || value.trim() === "") {
+      return Promise.reject("Field cannot contain whitespace only!");
+    }
+    return Promise.resolve();
+  };
 
   useEffect(() => {
     form.setFieldsValue(user);
   }, [user]);
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: IUser) => {
     setLoading(true);
+    const userData = {
+      user: values,
+    };
     try {
-      const userData = {
-        user: {
-          image: values.image,
-          username: values.username,
-          email: values.email,
-          password: values.password,
-          bio: values.bio,
-        },
-      };
-
-      const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/user`,
-        userData,
-        {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-        }
-      );
+      const response = await api.put(`/user`, userData);
       dispatch(infoUser(response.data.user));
       message.success("Update Info is successfully");
       //navigate("/login");
@@ -83,11 +70,10 @@ const Settings = () => {
 
           <Loading isLoading={loading}>
             <Form
-              className="shadow p-5"
+              className="shadow p-5 form-acount "
               name="basic"
-              labelCol={{ span: 4 }}
-              wrapperCol={{ span: 20 }}
-              style={{ width: 600 }}
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
               autoComplete="off"

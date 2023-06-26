@@ -5,10 +5,9 @@ const initialState = {
         title: "",
         description: "",
         body: "",
-        favoritesCount: 0,
-        favorited: "",
-        tagList: "",
-
+        favoritesCount: 1,
+        favorited: false,
+        tagList: [],
     }
 }
 

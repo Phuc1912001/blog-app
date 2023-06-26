@@ -4,18 +4,17 @@ import { api } from "../../services/AxiosInstance";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import Loading from "../Loading";
+import { IComment, ICommentArray } from "../../TypeInTypeScript/TypeComment";
 
 const Comment = ({ user, article, setAllCommentInBlog = () => {} }: any) => {
   const [form] = Form.useForm();
-  const [allComment, setAllComment] = useState<any>([]);
+  const [allComment, setAllComment] = useState<ICommentArray>([]);
   const [fetchedComments, setFetchedComments] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchComment = async () => {
     setLoading(true);
-    const commentGet = await api.get(
-      `${process.env.REACT_APP_API_URL}/articles/${article?.slug}/comments`
-    );
+    const commentGet = await api.get(`/articles/${article?.slug}/comments`);
     setAllComment(commentGet?.data?.comments);
     if (typeof setAllCommentInBlog === "function") {
       setAllCommentInBlog(commentGet?.data?.comments);
@@ -37,11 +36,7 @@ const Comment = ({ user, article, setAllCommentInBlog = () => {} }: any) => {
         body: values.body,
       },
     };
-    const commentPost = await api.post(
-      `${process.env.REACT_APP_API_URL}/articles/${article?.slug}/comments`,
-      commentValues
-    );
-    console.log("commentPost", commentPost);
+    await api.post(`/articles/${article?.slug}/comments`, commentValues);
     setFetchedComments(false);
   };
 
@@ -50,16 +45,9 @@ const Comment = ({ user, article, setAllCommentInBlog = () => {} }: any) => {
   };
 
   const handleDeleteComment = async (id: number) => {
-    console.log("id comment", id);
-
-    const deleteComment = await api.delete(
-      `${process.env.REACT_APP_API_URL}/articles/${article?.slug}/comments/${id}`
-    );
-    console.log("deleteComment", deleteComment);
-
+    await api.delete(`/articles/${article?.slug}/comments/${id}`);
     setFetchedComments(false);
   };
-  console.log("allComment", allComment);
 
   const content = (id: number) => (
     <div>
@@ -72,13 +60,21 @@ const Comment = ({ user, article, setAllCommentInBlog = () => {} }: any) => {
       </div>
     </div>
   );
+
+  const CustomValidator = (_: any, value: any) => {
+    if (!value || value.trim() === "") {
+      return Promise.reject(new Error("Please input your comment!"));
+    }
+    return Promise.resolve();
+  };
+
   return (
     <div>
       <Loading isLoading={loading}>
         {allComment && allComment.length > 0 ? (
           <>
             <div>
-              {allComment.map((comment: any, index: number) => (
+              {allComment.map((comment: IComment, index: number) => (
                 <div
                   key={index}
                   className="d-flex flex-wrap align-items-center gap-2 mt-4"
@@ -156,7 +152,7 @@ const Comment = ({ user, article, setAllCommentInBlog = () => {} }: any) => {
             rules={[
               {
                 required: true,
-                message: "Please input your comment!",
+                validator: CustomValidator,
               },
             ]}
           >

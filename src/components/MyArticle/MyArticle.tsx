@@ -4,6 +4,7 @@ import Blogs from "../Blogs";
 import { dataImage } from "../../dataImage/dataImage";
 import { api } from "../../services/AxiosInstance";
 import { Pagination } from "antd";
+import { IArticleArray } from "../../TypeInTypeScript/TypeArticle";
 
 const MyArticle = ({
   show,
@@ -13,7 +14,7 @@ const MyArticle = ({
   setCurrentPageMyArticle,
 }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [myArticles, setMyArticles] = useState<any>([]);
+  const [myArticles, setMyArticles] = useState<IArticleArray>([]);
   const [totalItemsOfMyArticle, setTotalItemsOfMyArticle] =
     useState<number>(197);
 
@@ -21,7 +22,7 @@ const MyArticle = ({
     setLoading(true);
     const offset = (currentPageMyArticle - 1) * pageSize;
     const res = await api.get(
-      `${process.env.REACT_APP_API_URL}/articles?author=${username}&limit=${pageSize}&offset=${offset}`
+      `/articles?author=${username}&limit=${pageSize}&offset=${offset}`
     );
     const { articles, articlesCount } = res.data;
     setMyArticles(articles);

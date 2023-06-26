@@ -3,8 +3,14 @@ import { Container, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import Loading from "../components/Loading";
 import * as message from "../components/Message";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { api } from "../services/AxiosInstance";
+
+interface IRegister {
+  username: string;
+  email: string;
+  password: string;
+}
 
 const Register = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -18,21 +24,13 @@ const Register = () => {
     }
     return Promise.reject("Please enter a valid email address!");
   };
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: IRegister) => {
     setLoading(true);
     try {
       const userData = {
-        user: {
-          username: values.username,
-          email: values.email,
-          password: values.password,
-        },
+        user: values,
       };
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/users`,
-        userData
-      );
-
+      await api.post(`/users`, userData);
       message.success("Register is successfully");
       navigate("/login");
     } catch (error) {
@@ -46,28 +44,32 @@ const Register = () => {
     console.log("Failed:", errorInfo);
   };
 
+  const whitespaceValidator = (_: any, value: any) => {
+    if (!value || value.trim() === "") {
+      return Promise.reject("Field cannot contain whitespace only!");
+    }
+    return Promise.resolve();
+  };
+
   return (
     <Container>
-      <Row>
-        <Col
-          md={12}
-          className="d-flex flex-column align-items-center justify-content-center"
-        >
-          <div className="d-flex flex-column align-items-center justify-content-center shadow p-5 ">
+      <Row className="justify-content-center">
+        <Col md={12} fluid>
+          <div className="d-flex flex-column align-items-center justify-content-center shadow p-5">
             <h1>Sign Up</h1>
             <Link
               to={"/login"}
               className="text-success text-decoration-none mb-3"
             >
-              Have an acount
+              Have an account
             </Link>
             <Loading isLoading={loading}>
               <Form
                 name="basic"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 20 }}
-                style={{ width: 500 }}
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
                 initialValues={{ remember: true }}
+                className="form-acount"
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
@@ -76,7 +78,11 @@ const Register = () => {
                   label="Username"
                   name="username"
                   rules={[
-                    { required: true, message: "Please input your username!" },
+                    {
+                      required: true,
+                      message: "Please input your username!",
+                    },
+                    { validator: whitespaceValidator },
                   ]}
                 >
                   <Input />
@@ -91,17 +97,19 @@ const Register = () => {
                 >
                   <Input />
                 </Form.Item>
-
                 <Form.Item
                   label="Password"
                   name="password"
                   rules={[
-                    { required: true, message: "Please input your password!" },
+                    {
+                      required: true,
+                      message: "Please input your password!",
+                    },
+                    { validator: whitespaceValidator },
                   ]}
                 >
                   <Input.Password />
                 </Form.Item>
-
                 <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
                   <Button type="primary" htmlType="submit">
                     Sign Up
